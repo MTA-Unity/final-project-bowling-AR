@@ -80,3 +80,5 @@ crashlytics_build_id.xml
 
 # Firebase SDK
 /[Aa]ssets/Firebase/Plugins/x86_64/
+
+.DS_Store
