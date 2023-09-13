@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class BallController : MonoBehaviour
 {
@@ -12,9 +11,12 @@ public class BallController : MonoBehaviour
     [SerializeField] private float movementSpeed;
     [SerializeField] private float rotationSpeed;
     [SerializeField] private float startThrowForce;
+    
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip rollingBallAudioClip;
 
     private BallControlState _ballControlState;
-    
+
     private Vector3 _newRotation;
     private Vector3 _newPosition;
     private const float MinRotationDegrees = -90f;
@@ -96,6 +98,9 @@ public class BallController : MonoBehaviour
         Debug.Log("throwForceVector: " + throwForceVector);
 
         ballRigidBody.AddForce(throwForceVector, ForceMode.Impulse);
+        
+        // Play sound of rolling ball
+        audioSource.PlayOneShot(rollingBallAudioClip);
         
         // Reset the ball control state and arrow scale.
         // arrow.ResetArrowScale();
