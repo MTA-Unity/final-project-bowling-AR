@@ -6,6 +6,7 @@ public class BallController : MonoBehaviour
     [SerializeField] private Rigidbody ballRigidBody;
     [SerializeField] private Transform ballTransform;
     [SerializeField] private Transform ballStartPosition;
+    [SerializeField] private Transform ballFinishPosition;
     [SerializeField] private ArrowController arrow;
     
     [SerializeField] private float movementSpeed;
@@ -24,32 +25,26 @@ public class BallController : MonoBehaviour
     
     private void Start()
     {
-        ballTransform.position = ballStartPosition.position;
-        _newPosition = ballTransform.position;
-        _newRotation = ballTransform.rotation.eulerAngles;
-
-        _ballControlState = BallControlState.Position;
+        Reset();
     }
 
     private void Update()
     {
         // Continue to next ball control state
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && _ballControlState != BallControlState.InMotion)
         {
             if (_ballControlState == BallControlState.ThrowForce)
             {
                 ThrowBall();
             }
-            else
-            {
-                // Calculate next ball control state
-                Debug.Log("Last control state: " + _ballControlState);
             
-                int nextBallState = ((int)_ballControlState + 1) % Enum.GetValues(typeof(BallControlState)).Length;
-                _ballControlState = (BallControlState)nextBallState;
+            // Calculate next ball control state
+            Debug.Log("Last control state: " + _ballControlState);
             
-                Debug.Log("Current control state: " + _ballControlState);
-            }
+            int nextBallState = ((int)_ballControlState + 1) % Enum.GetValues(typeof(BallControlState)).Length;
+            _ballControlState = (BallControlState)nextBallState;
+            
+            Debug.Log("Current control state: " + _ballControlState);
         }
 
         switch (_ballControlState)
@@ -77,6 +72,18 @@ public class BallController : MonoBehaviour
                 break;
             }
         }
+        
+        // If ball reached to the end of the lane
+        if (transform.position.z >= ballFinishPosition.position.z)
+        {
+            GameEvents.Instance.TriggerBallReachedFinishEvent();
+        }
+        
+        // Reset for debug
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            Reset();
+        }
     }
     
     void FixedUpdate()
@@ -99,17 +106,25 @@ public class BallController : MonoBehaviour
 
         ballRigidBody.AddForce(throwForceVector, ForceMode.Impulse);
         
-        // Play sound of rolling ball
+        // Play sound of rolling ball   
         audioSource.PlayOneShot(rollingBallAudioClip);
+    }
+
+    public void Reset()
+    {
+        ballRigidBody.isKinematic = true;
+        _ballControlState = BallControlState.Position;
+
+        // Reset ball position and rotation
+        ballTransform.position = ballStartPosition.position;
+        ballTransform.rotation = ballStartPosition.rotation;
+        _newPosition = ballTransform.position;
+        _newRotation = ballTransform.rotation.eulerAngles;
         
-        // Reset the ball control state and arrow scale.
-        // arrow.ResetArrowScale();
+        // Reset arrow
+        arrow.gameObject.SetActive(true);
+        arrow.ResetArrowScale();
     }
 }
 
-public enum BallControlState
-{
-    Position,
-    Rotation,
-    ThrowForce
-}
+

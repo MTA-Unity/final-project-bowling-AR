@@ -4,7 +4,7 @@ public class ArrowController : MonoBehaviour
 {
     [SerializeField] private float arrowScaleSpeed;
     
-    private const float MinScale = 0.1f; // Minimum scale along the Z-axis
+    private const float MinScale = 1.0f; // Minimum scale along the Z-axis
     private const float MaxScale = 2.0f; // Maximum scale along the Z-axis
 
     private Vector3 _initialScale;
