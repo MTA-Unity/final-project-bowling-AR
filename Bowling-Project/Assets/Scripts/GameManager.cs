@@ -122,6 +122,7 @@ public class GameManager : MonoBehaviour
 
         _gameStatus.GameStarted = true;
         Debug.Log("GameStarted  " + _gameStatus.GameStarted);
+        Debug.Log("The player " + _players[0].GetName() + " has started playing");
     }
 
     private bool FinishRoll()
@@ -184,10 +185,13 @@ public class GameManager : MonoBehaviour
         _players[_gameStatus.CurrentPlayer - 1].SetFrameRecord(_gameStatus.CurrentFrame);
 
         _gameStatus.CurrentPlayer++;
-        Debug.Log("CurrentPlayer: " + _gameStatus.CurrentPlayer);
         if (_gameStatus.CurrentPlayer > _players.Length)
         {
             isLastPlayerInFrameCycle = true;
+        }
+        else
+        {
+            Debug.Log("The player " + _players[_gameStatus.CurrentPlayer - 1].GetName() + "has started playing");
         }
         
         // Clean all pins and reset ball position
@@ -206,7 +210,7 @@ public class GameManager : MonoBehaviour
         if (nextFrameNum <= framesNumber)
         {
             _gameStatus.CurrentPlayer = 1;
-            Debug.Log("CurrentPlayer: " + _gameStatus.CurrentPlayer);
+            Debug.Log("The player " + _players[_gameStatus.CurrentPlayer - 1].GetName() + " has started playing");
             _gameStatus.CurrentFrame = new FrameRecord(nextFrameNum);
         }
         else
@@ -230,6 +234,7 @@ public class GameManager : MonoBehaviour
         // If the ball reached the finish point (after the pins) without hitting any pin
         if (!_gameStatus.CheckFallenPins)
         {
+            ball.StopSound();
             FinishRoll();
         }
     }
@@ -240,6 +245,7 @@ public class GameManager : MonoBehaviour
         {
             _gameStatus.CheckFallenPins = true;
             Debug.Log("CheckFallenPins: " + _gameStatus.CheckFallenPins);
+            ball.StopSound();
         }
 
         _pinsStates[pinNumber - 1] = PinState.Swinging;

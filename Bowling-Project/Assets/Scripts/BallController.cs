@@ -125,6 +125,11 @@ public class BallController : MonoBehaviour
         arrow.gameObject.SetActive(true);
         arrow.ResetArrowScale();
     }
+
+    public void StopSound()
+    {
+        audioSource.Stop();
+    }
 }
 
 
