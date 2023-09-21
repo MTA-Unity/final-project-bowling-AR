@@ -1,3 +1,4 @@
+using FrameModel;
 
 namespace Models
 {
@@ -5,7 +6,6 @@ namespace Models
     {
         public bool GameStarted;
         public bool CheckFallenPins;
-        public bool NextPlayerTurn;
 
         public FrameRecord CurrentFrame;
         public int CurrentPlayer;
@@ -13,7 +13,6 @@ namespace Models
 
         public GameStatus(bool gameStarted = false)
         {
-            NextPlayerTurn = true;
             GameStarted = gameStarted;
             CurrentFrame = new FrameRecord(1);
             CurrentPlayer = 1;
