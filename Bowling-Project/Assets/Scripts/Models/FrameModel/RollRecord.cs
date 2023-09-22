@@ -1,6 +1,8 @@
-namespace Models
+using Models;
+
+namespace FrameModel
 {
-    public struct RollRecord
+    internal struct RollRecord
     {
         public int RollNumber;
         public int FallenPins;

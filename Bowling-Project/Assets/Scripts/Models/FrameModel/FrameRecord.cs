@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using Models;
 
-namespace Models
+namespace FrameModel
 {
     public class FrameRecord
     {
@@ -12,7 +13,7 @@ namespace Models
         public FrameRecord(int frameNumber)
         {
             _frameNumber = frameNumber;
-            _currentRollNumber = 0;
+            _currentRollNumber = 1;
             _numberOfRollsInFrame = 2;
             _rolls = new List<RollRecord>();
         }
@@ -30,30 +31,33 @@ namespace Models
 
         public void SetRoll(int fallenPins, Score score)
         {
-            _currentRollNumber++;
-
             RollRecord newRoll = new RollRecord(_currentRollNumber, fallenPins, score);
             _rolls.Add(newRoll);
         }
-
+        
+        public int GetNumberOfRollsInFrame()
+        {
+            return _numberOfRollsInFrame;
+        }
+        
+        public void SetNumberOfRollsInFrame(int numberOfRoles)
+        {
+            _numberOfRollsInFrame = numberOfRoles;
+        }
+        
         public int GetCurrentRollNumber()
         {
             return _currentRollNumber;
         }
-
-        public int GetNumberOfRollsInFrame()
+        
+        public void IncrementCurrentRollNumber()
         {
-            return _numberOfRollsInFrame;
+            _currentRollNumber++;
         }
 
         public int GetCurrentFrameNumber()
         {
             return _frameNumber;
-        }
-        
-        public void IncrementCurrentFrameNumber()
-        {
-            _frameNumber++;
         }
     }
 }

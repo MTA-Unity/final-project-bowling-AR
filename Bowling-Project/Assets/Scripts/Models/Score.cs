@@ -1,3 +1,4 @@
+
 namespace Models
 {
     public struct Score

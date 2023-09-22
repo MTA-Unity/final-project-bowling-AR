@@ -1,22 +1,37 @@
 using System.Collections.Generic;
-using Models;
+using FrameModel;
+using UnityEngine;
 
-namespace Classes
+namespace Models
 {
     public class Player
     {
-        private List<FrameRecord> _frames; // List of frames for the player
-        public string Name { get; set; }
+        private List<FrameRecord> _frames; // List of frames for the player's game
+        private int _currentFrameOfPlayer;
+        private string _name;
 
-        public Player(int numberOfFrames = 10)
+        public Player(string name, int numberOfFrames = 10)
         {
+            _name = name;
             _frames = new List<FrameRecord>(numberOfFrames);
+            _currentFrameOfPlayer = 1;
         }
 
-        public void RecordRollScore(int frameNumber, int accumulatedScore)
+        public void SetName(string name)
         {
-            // Record the throw in the current frame
-            // _frames[frameNumber - 1].SetRollScore(accumulatedScore);
+            _name = name;
+        }
+        
+        public string GetName()
+        {
+            return _name;
+        }
+
+        public void SetFrameRecord(FrameRecord frame)
+        {
+            _frames[_currentFrameOfPlayer] = frame;
+            _currentFrameOfPlayer++;
+            Debug.Log("_currentFrameOfPlayer: " + _currentFrameOfPlayer);
         }
     }
 }
