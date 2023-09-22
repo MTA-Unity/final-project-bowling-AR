@@ -44,7 +44,7 @@ public class GameEvents: MonoBehaviour
         PinSwingingEvent?.Invoke(pinNumber);
     }
     
-    public void TriggerPinSteadyEvent(int pinNumber)
+    public void TriggerPinSteadyEvent(int pinNumber) 
     {
         PinSteadyEvent?.Invoke(pinNumber);
     }

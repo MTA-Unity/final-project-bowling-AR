@@ -48,8 +48,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (_gameStatus.GameStarted)
-        {
+        if (_gameStatus.GameStarted) {
             PlayGame();
         }
     }
@@ -78,13 +77,17 @@ public class GameManager : MonoBehaviour
             }
         }
         
-        if (_gameStatus.CheckFallenPins)
+        if (_gameStatus.CheckFallenPins) // TODO - set CheckFallenPins to true also if the ball passed the finish line/stopped moving 
         {
             if (AllPinsStoppedMoving())
             {
                 _gameStatus.CheckFallenPins = false;
+                int a = _pinsStates.Count(state => state is PinState.Steady);
+                int b = _pinsStates.Count(state => state is PinState.Fallen);
+                Debug.Log("status Steady -" + a);
+                Debug.Log("status Fallen -" + b);
 
-                // Progress to next roll
+                // TODO - Progress to next roll
                 if (_gameStatus.CurrentFrame.GetCurrentRollNumber() > _gameStatus.CurrentFrame.GetNumberOfRollsInFrame())
                 {
                        
@@ -129,15 +132,18 @@ public class GameManager : MonoBehaviour
 
     private void OnBallReachedFinish()
     {
-        
+        Debug.Log("Finish line ");
+        _gameStatus.CheckFallenPins = true;
     }
 
     private void OnPinSwinging(int pinNumber)
     {
-        if (!_gameStatus.CheckFallenPins)
-        {
+        // Debug.Log("swinnnggggg!!!!!!!!!!###!");
+
+        // if (!_gameStatus.CheckFallenPins)
+        // {
             _gameStatus.CheckFallenPins = true;
-        }
+        // }
 
         _pinsStates[pinNumber - 1] = PinState.Swinging;
     }
@@ -145,10 +151,13 @@ public class GameManager : MonoBehaviour
     private void OnPinSteady(int pinNumber)
     {
         _pinsStates[pinNumber - 1] = PinState.Steady;
+        // Debug.Log("steady!!!");
     }
     
     private void OnPinFallen(int pinNumber)
     {
+        // Debug.Log("fallllll!!!");
+
         _pinsStates[pinNumber - 1] = PinState.Fallen;
         // _gameStatus.CurrentFrame.SetRoll();
     }
