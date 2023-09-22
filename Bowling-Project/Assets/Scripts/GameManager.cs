@@ -49,8 +49,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (_gameStatus.GameStarted)
-        {
+        if (_gameStatus.GameStarted) {
             PlayGame();
         }
     }
@@ -72,6 +71,9 @@ public class GameManager : MonoBehaviour
         {
             if (AllPinsStoppedMoving())
             {
+                _gameStatus.CheckFallenPins = false;
+                int fallenAmount = _pinsStates.Count(state => state is PinState.Fallen);
+
                 Debug.Log("All pins stopped moving");
                 bool isLastRollInFrame = FinishRoll();
                 
@@ -231,6 +233,7 @@ public class GameManager : MonoBehaviour
 
     private void OnBallReachedFinish()
     {
+        _gameStatus.CheckFallenPins = true;
         // If the ball reached the finish point (after the pins) without hitting any pin
         if (!_gameStatus.CheckFallenPins)
         {
@@ -241,23 +244,22 @@ public class GameManager : MonoBehaviour
 
     private void OnPinSwinging(int pinNumber)
     {
-        if (!_gameStatus.CheckFallenPins)
-        {
-            _gameStatus.CheckFallenPins = true;
-            Debug.Log("CheckFallenPins: " + _gameStatus.CheckFallenPins);
-            ball.StopSound();
-        }
-
+        _gameStatus.CheckFallenPins = true;
+        Debug.Log("CheckFallenPins: " + _gameStatus.CheckFallenPins);
+        ball.StopSound();
         _pinsStates[pinNumber - 1] = PinState.Swinging;
     }
     
     private void OnPinSteady(int pinNumber)
     {
         _pinsStates[pinNumber - 1] = PinState.Steady;
+        // Debug.Log("steady!!!");
     }
     
     private void OnPinFallen(int pinNumber)
     {
+        // Debug.Log("fallllll!!!");
+
         _pinsStates[pinNumber - 1] = PinState.Fallen;
         _gameStatus.FallenPinsInFrame++;
     }

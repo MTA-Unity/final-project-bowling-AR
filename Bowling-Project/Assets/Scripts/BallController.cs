@@ -22,6 +22,8 @@ public class BallController : MonoBehaviour
     private Vector3 _newPosition;
     private const float MinRotationDegrees = -90f;
     private const float MaxRotationDegrees = 90f;
+
+    private bool notifiedReachedToFinishLine = false;
     
     private void Start()
     {
@@ -74,8 +76,9 @@ public class BallController : MonoBehaviour
         }
         
         // If ball reached to the end of the lane
-        if (transform.position.z >= ballFinishPosition.position.z)
+        if (transform.position.z >= ballFinishPosition.position.z && !notifiedReachedToFinishLine)
         {
+            notifiedReachedToFinishLine = true;
             GameEvents.Instance.TriggerBallReachedFinishEvent();
         }
         
