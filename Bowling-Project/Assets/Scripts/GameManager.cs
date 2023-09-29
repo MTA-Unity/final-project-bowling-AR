@@ -261,7 +261,7 @@ public class GameManager : MonoBehaviour
 
     private void OnPinSwinging(int pinNumber)
     {
-        // _gameStatus.CheckFallenPins = true;
+        _gameStatus.CheckFallenPins = true;
         ball.StopSound();
         _pinsStates[pinNumber - 1] = PinState.Swinging;
     }
