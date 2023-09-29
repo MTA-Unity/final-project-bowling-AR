@@ -24,6 +24,8 @@ public class BallController : MonoBehaviour
     private const float MaxRotationDegrees = 90f;
 
     private bool notifiedReachedToFinishLine = false;
+    private bool notifiedStoppedMoving = false;
+    private bool startedMoving = false;
     
     private void Start()
     {
@@ -41,8 +43,7 @@ public class BallController : MonoBehaviour
             }
             
             // Calculate next ball control state
-            Debug.Log("Last control state: " + _ballControlState);
-            
+
             int nextBallState = ((int)_ballControlState + 1) % Enum.GetValues(typeof(BallControlState)).Length;
             _ballControlState = (BallControlState)nextBallState;
             
@@ -81,6 +82,17 @@ public class BallController : MonoBehaviour
             notifiedReachedToFinishLine = true;
             GameEvents.Instance.TriggerBallReachedFinishEvent();
         }
+
+        if (_ballControlState == BallControlState.InMotion && ballRigidBody.velocity.magnitude > 0) {
+            startedMoving = true;
+        }
+
+        if ((ballRigidBody.velocity.magnitude == 0 && startedMoving && !notifiedStoppedMoving)
+         || (ballTransform.position.y < 0 && !notifiedStoppedMoving)) {
+            startedMoving = false;
+            notifiedStoppedMoving = true;
+            GameEvents.Instance.TriggerBallReachedFinishEvent();
+        }
         
         // Reset for debug
         if (Input.GetKeyDown(KeyCode.R))
@@ -116,6 +128,8 @@ public class BallController : MonoBehaviour
     public void Reset()
     {
         ballRigidBody.isKinematic = true;
+        startedMoving = false;
+        notifiedStoppedMoving = false;
         _ballControlState = BallControlState.Position;
 
         // Reset ball position and rotation

@@ -1,8 +1,10 @@
 using FrameModel;
+using UnityEngine;
+using System.Collections;
 
 namespace Models
 {
-    public struct GameStatus
+    public class GameStatus
     {
         public bool GameStarted;
         public bool CheckFallenPins;
@@ -18,6 +20,10 @@ namespace Models
             CurrentPlayer = 1;
             FallenPinsInFrame = 0;
             CheckFallenPins = false;
+        }
+
+        public FrameRecord GetCurrentFrame() {
+            return CurrentFrame;
         }
     }
 }
