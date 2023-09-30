@@ -11,6 +11,7 @@ public class BallController : MonoBehaviour
     
     [SerializeField] private float movementSpeed;
     [SerializeField] private float rotationSpeed;
+    [SerializeField] private float arrowScaleSpeed;
     [SerializeField] private float startThrowForce;
     
     [SerializeField] private AudioSource audioSource;
@@ -22,7 +23,8 @@ public class BallController : MonoBehaviour
     private Vector3 _newPosition;
     private const float MinRotationDegrees = -90f;
     private const float MaxRotationDegrees = 90f;
-
+    private const float MinArrowScale = 1.0f; // Minimum scale along the Z-axis
+    private const float MaxArrowScale = 3.0f; // Maximum scale along the Z-axis
     private bool notifiedReachedToFinishLine = false;
     private bool notifiedStoppedMoving = false;
     private bool startedMoving = false;
@@ -43,7 +45,6 @@ public class BallController : MonoBehaviour
             }
             
             // Calculate next ball control state
-
             int nextBallState = ((int)_ballControlState + 1) % Enum.GetValues(typeof(BallControlState)).Length;
             _ballControlState = (BallControlState)nextBallState;
             
@@ -54,24 +55,17 @@ public class BallController : MonoBehaviour
         {
             case BallControlState.Position:
             {
-                float horizontalInput = Input.GetAxis("Horizontal");
-                float horizontalMovementDelta = horizontalInput * movementSpeed * Time.deltaTime;
-                _newPosition += ballTransform.TransformDirection(Vector3.right) * horizontalMovementDelta;
+                movePositionAnimation();
                 break;
             }
             case BallControlState.Rotation:
             {
-                float rotationInput = Input.GetAxis("Horizontal");
-                float newYRotation = Mathf.Clamp(_newRotation.y + (rotationInput * rotationSpeed * Time.deltaTime),
-                    MinRotationDegrees, MaxRotationDegrees);
-                _newRotation = Vector3.up * newYRotation;
-                ballTransform.rotation = Quaternion.Euler(_newRotation);
+                moveRotationAnimation();
                 break;
             }
             case BallControlState.ThrowForce:
             {
-                float verticalInput = Input.GetAxis("Vertical");
-                arrow.ChangeArrowScale(verticalInput);
+                moveForceAnimation();
                 break;
             }
         }
@@ -99,6 +93,52 @@ public class BallController : MonoBehaviour
         {
             Reset();
         }
+    }
+
+    private void movePositionAnimation() {
+        // Move the ball left and right within the screen boundaries.
+        _newPosition.x += movementSpeed * Time.deltaTime;            
+
+        // Check if the ball reaches the floor edges and reverse direction.
+        if (_newPosition.x > 4)
+        {
+            _newPosition.x = 4;
+            movementSpeed *= -1;
+        } else if (_newPosition.x < -4) {
+            _newPosition.x = -4;
+            movementSpeed *= -1;
+        } 
+    }
+
+    private void moveRotationAnimation() {
+        // Rotate the ball left and right within the screen boundaries.
+        float newYRotation = _newRotation.y + (rotationSpeed * Time.deltaTime);        
+
+        // Check if the ball reaches the angle edges and reverse direction.
+        if (newYRotation > MaxRotationDegrees)
+        {
+            newYRotation = MaxRotationDegrees;
+            rotationSpeed *= -1;
+        } else if (newYRotation < MinRotationDegrees) {
+            newYRotation = MinRotationDegrees;
+            rotationSpeed *= -1;
+        } 
+        _newRotation = Vector3.up * newYRotation;
+        ballTransform.rotation = Quaternion.Euler(_newRotation);
+    }
+
+    private void moveForceAnimation() {
+        float newZScale = arrow.GetArrowScaleOnZAxis() + (arrowScaleSpeed * Time.deltaTime); 
+
+        if (newZScale > MaxArrowScale) {
+            newZScale = MaxArrowScale;
+            arrowScaleSpeed *= -1;
+        } else if (newZScale < MinArrowScale) {
+            newZScale = MinArrowScale;
+            arrowScaleSpeed *= -1;
+        }
+
+        arrow.ChangeArrowScale(newZScale);   
     }
     
     void FixedUpdate()
