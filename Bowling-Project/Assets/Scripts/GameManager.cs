@@ -63,7 +63,6 @@ public class GameManager : MonoBehaviour
         GameEvents.Instance.ballReachedFinishEvent.RemoveListener(OnBallStoppedMoving);
         GameEvents.Instance.ballReachedFinishEvent.RemoveListener(OnBallReachedFinish);
         
-        // TODO Liraz pin script
         GameEvents.Instance.PinSwingingEvent -= OnPinSwinging;
         GameEvents.Instance.PinSteadyEvent -= OnPinSteady;
         GameEvents.Instance.PinFallenEvent -= OnPinFallen;
@@ -161,10 +160,10 @@ public class GameManager : MonoBehaviour
 
     private void SaveRollData()
     {
-        // TODO Implement this method in ScoreManager
-        // Score score = ScoreManager.Instance.CalculateScore();
+        Score score = ScoreManager.Instance.CalculateScoreOfRoll(_pinsInFrameStart, fallenPinsAmount, _gameStatus.CurrentFrame);
+        Debug.Log("score: "+ score.NumericScore);
         _gameStatus.FallenPinsInFrame = fallenPinsAmount;
-        // _gameStatus.CurrentFrame.SetRoll(_gameStatus.FallenPinsInFrame, score); // --- TODO
+        _gameStatus.CurrentFrame.SetRoll(_gameStatus.FallenPinsInFrame, score);
     }
 
     private void CleanFallenPins()
@@ -173,6 +172,7 @@ public class GameManager : MonoBehaviour
         {
             if (_pinsStates[pin.pinNumber - 1] == PinState.Fallen)
             {        
+                _pinsStates[pin.pinNumber - 1] = PinState.Steady;
                 pin.gameObject.SetActive(false);
             }
         }
@@ -197,6 +197,10 @@ public class GameManager : MonoBehaviour
         
         // Save the player's frame and update the frame number
         _players[_gameStatus.CurrentPlayer - 1].SetFrameRecord(_gameStatus.CurrentFrame);
+
+        int playerScore =  ScoreManager.Instance.CalculateScoreOfPlayer(_players[_gameStatus.CurrentPlayer - 1], _players[_gameStatus.CurrentPlayer - 1]._currentFrameOfPlayer - 1);
+
+        Debug.Log("playerScore of Player - " + _players[_gameStatus.CurrentPlayer - 1].GetName() + " is: " + playerScore);
 
         _gameStatus.CurrentPlayer++;
         if (_gameStatus.CurrentPlayer > _players.Length)

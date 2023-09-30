@@ -88,7 +88,7 @@ public class BallController : MonoBehaviour
         }
 
         if ((ballRigidBody.velocity.magnitude == 0 && startedMoving && !notifiedStoppedMoving)
-         || (ballTransform.position.y < 0 && !notifiedStoppedMoving)) {
+         || (ballTransform.position.y < 0 && startedMoving && !notifiedStoppedMoving)) {
             startedMoving = false;
             notifiedStoppedMoving = true;
             GameEvents.Instance.TriggerBallReachedFinishEvent();

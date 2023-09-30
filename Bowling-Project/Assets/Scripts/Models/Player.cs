@@ -32,5 +32,10 @@ namespace Models
             _frames[_currentFrameOfPlayer - 1] = frame;
             _currentFrameOfPlayer++;
         }
+
+        public FrameRecord GetFrameRecord(int frameNumber)
+        {
+            return _frames[frameNumber - 1];
+        }
     }
 }
