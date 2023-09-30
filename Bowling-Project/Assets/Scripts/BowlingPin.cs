@@ -44,7 +44,7 @@ public class BowlingPin : MonoBehaviour
         if (distanceFromForward < 0.001) {
             GameEvents.Instance.TriggerPinSteadyEvent(pinNumber);
         } 
-        else if (velocityDistanceFromZero > 0.2) {
+        else if (rb.velocity.magnitude != 0) {
             GameEvents.Instance.TriggerPinSwingingEvent(pinNumber);
         } else {
             GameEvents.Instance.TriggerPinFallenEvent(pinNumber);

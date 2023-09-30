@@ -64,7 +64,7 @@ public class ScoreManager : MonoBehaviour
             Score roll2Score = currentFrame.GetRollScore(2);
 
             sumScore = sumScore + roll1Mul * roll1Score.NumericScore + roll2Mul * roll2Score.NumericScore;
-            if (roll1Score.Spare) {
+            if (roll2Score.Spare) {
                 roll1Mul = 2;
                 roll2Mul = 1;
             } else if (roll1Score.Strike) {

@@ -142,7 +142,12 @@ public class GameManager : MonoBehaviour
         Debug.Log("FinishRoll, Player - "+ _gameStatus.CurrentPlayer);
         
         // Save the current roll data (score, fallen pins, etc)
-        SaveRollData();
+        Score score = SaveRollData(); 
+
+        // checking if it's strike
+        if (score.Strike) {
+            _gameStatus.CurrentFrame.SetNumberOfRollsInFrame(1);
+        }
         
         // If it's not the last roll - progress to next roll and return false
         if (_gameStatus.CurrentFrame.GetCurrentRollNumber() < _gameStatus.CurrentFrame.GetNumberOfRollsInFrame())
@@ -158,12 +163,13 @@ public class GameManager : MonoBehaviour
         return isLastRollInFrame;
     }
 
-    private void SaveRollData()
+    private Score SaveRollData()
     {
         Score score = ScoreManager.Instance.CalculateScoreOfRoll(_pinsInFrameStart, fallenPinsAmount, _gameStatus.CurrentFrame);
         Debug.Log("score: "+ score.NumericScore);
         _gameStatus.FallenPinsInFrame = fallenPinsAmount;
         _gameStatus.CurrentFrame.SetRoll(_gameStatus.FallenPinsInFrame, score);
+        return score;
     }
 
     private void CleanFallenPins()
