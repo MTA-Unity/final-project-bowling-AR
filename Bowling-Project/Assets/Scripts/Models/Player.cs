@@ -6,14 +6,14 @@ namespace Models
 {
     public class Player
     {
-        private List<FrameRecord> _frames; // List of frames for the player's game
-        private int _currentFrameOfPlayer;
+        private FrameRecord[] _frames; // List of frames for the player's game
+        public int _currentFrameOfPlayer;
         private string _name;
 
         public Player(string name, int numberOfFrames = 10)
         {
             _name = name;
-            _frames = new List<FrameRecord>(numberOfFrames);
+            _frames = new FrameRecord[numberOfFrames];
             _currentFrameOfPlayer = 1;
         }
 
@@ -29,9 +29,13 @@ namespace Models
 
         public void SetFrameRecord(FrameRecord frame)
         {
-            _frames[_currentFrameOfPlayer] = frame;
+            _frames[_currentFrameOfPlayer - 1] = frame;
             _currentFrameOfPlayer++;
-            Debug.Log("_currentFrameOfPlayer: " + _currentFrameOfPlayer);
+        }
+
+        public FrameRecord GetFrameRecord(int frameNumber)
+        {
+            return _frames[frameNumber - 1];
         }
     }
 }

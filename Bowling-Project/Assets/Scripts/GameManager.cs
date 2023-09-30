@@ -8,14 +8,15 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private int framesNumber = 10;
     [SerializeField] private BallController ball;
-    
+    private int framesNumber = 2;
     private Player[] _players;
     private PinState[] _pinsStates;
-    private GameStatus _gameStatus;
+    private BowlingPin[] pins;
+    private GameStatus _gameStatus = new GameStatus();
 
     private int _pinsInFrameStart;
+    private int fallenPinsAmount;
     public static GameManager Instance { get; private set; }
 
     void Awake()
@@ -39,8 +40,10 @@ public class GameManager : MonoBehaviour
         
         // Reset all pins states to steady
         _pinsStates = Enumerable.Repeat(PinState.Steady, _pinsInFrameStart).ToArray();
+        SetAllBowlingPins();
         
         // Subscribe to game events
+        GameEvents.Instance.ballReachedFinishEvent.AddListener(OnBallStoppedMoving);
         GameEvents.Instance.ballReachedFinishEvent.AddListener(OnBallReachedFinish);
         GameEvents.Instance.PinSwingingEvent += OnPinSwinging;
         GameEvents.Instance.PinSteadyEvent += OnPinSteady;
@@ -57,9 +60,9 @@ public class GameManager : MonoBehaviour
     private void OnDestroy()
     {
         // Subscribe to game events
+        GameEvents.Instance.ballReachedFinishEvent.RemoveListener(OnBallStoppedMoving);
         GameEvents.Instance.ballReachedFinishEvent.RemoveListener(OnBallReachedFinish);
         
-        // TODO Liraz pin script
         GameEvents.Instance.PinSwingingEvent -= OnPinSwinging;
         GameEvents.Instance.PinSteadyEvent -= OnPinSteady;
         GameEvents.Instance.PinFallenEvent -= OnPinFallen;
@@ -72,12 +75,13 @@ public class GameManager : MonoBehaviour
             if (AllPinsStoppedMoving())
             {
                 _gameStatus.CheckFallenPins = false;
-                int fallenAmount = _pinsStates.Count(state => state is PinState.Fallen);
+                fallenPinsAmount = _pinsStates.Count(state => state is PinState.Fallen);
 
-                Debug.Log("All pins stopped moving");
+                Debug.Log("All pins stopped moving, fallenPinsAmount: " + fallenPinsAmount);
                 bool isLastRollInFrame = FinishRoll();
+
+                // every frame-cycle has 1/2 rolls
                 
-                Debug.Log("isLastRollInFrame: " + isLastRollInFrame);
                 if (isLastRollInFrame)
                 {
                     bool isLastPlayerInFrameCycle = FinishPlayerFrame();
@@ -114,7 +118,7 @@ public class GameManager : MonoBehaviour
         _players = new Player[playersNames.Count];
         for (int i = 0; i < playersNames.Count; i++)
         {
-            _players[i] = new Player(name = playersNames[i]);
+            _players[i] = new Player(name = playersNames[i], framesNumber);
         }
 
         for (int i = 0; i < playersNames.Count; i++)
@@ -127,21 +131,29 @@ public class GameManager : MonoBehaviour
         Debug.Log("The player " + _players[0].GetName() + " has started playing");
     }
 
+    private void SetAllBowlingPins() {
+        pins = FindObjectsOfType<BowlingPin>();
+    }
+
     private bool FinishRoll()
     {
         bool isLastRollInFrame = true;
         _gameStatus.CheckFallenPins = false;
-        Debug.Log("CheckFallenPins: " + _gameStatus.CheckFallenPins);
+        Debug.Log("FinishRoll, Player - "+ _gameStatus.CurrentPlayer);
         
         // Save the current roll data (score, fallen pins, etc)
-        SaveRollData();
+        Score score = SaveRollData(); 
+
+        // checking if it's strike
+        if (score.Strike) {
+            _gameStatus.CurrentFrame.SetNumberOfRollsInFrame(1);
+        }
         
         // If it's not the last roll - progress to next roll and return false
         if (_gameStatus.CurrentFrame.GetCurrentRollNumber() < _gameStatus.CurrentFrame.GetNumberOfRollsInFrame())
         {
             isLastRollInFrame = false;
             _gameStatus.CurrentFrame.IncrementCurrentRollNumber();
-            Debug.Log("CurrentFrame" + _gameStatus.CurrentFrame);
             
             // Clean the fallen pins and reset ball position
             CleanFallenPins();
@@ -151,40 +163,50 @@ public class GameManager : MonoBehaviour
         return isLastRollInFrame;
     }
 
-    private void SaveRollData()
+    private Score SaveRollData()
     {
-        // TODO Implement this method in ScoreManager
-        // Score score = ScoreManager.Instance.CalculateScore();
-        
-        Debug.Log("FallenPinsInFrame: " + _gameStatus.FallenPinsInFrame);
-        // _gameStatus.CurrentFrame.SetRoll(_gameStatus.FallenPinsInFrame, score);
+        Score score = ScoreManager.Instance.CalculateScoreOfRoll(_pinsInFrameStart, fallenPinsAmount, _gameStatus.CurrentFrame);
+        Debug.Log("score: "+ score.NumericScore);
+        _gameStatus.FallenPinsInFrame = fallenPinsAmount;
+        _gameStatus.CurrentFrame.SetRoll(_gameStatus.FallenPinsInFrame, score);
+        return score;
     }
 
     private void CleanFallenPins()
-    {
-        // TODO implementation 
-        // PinController[] pins = gameObject.GetComponents<PinController>;
-        //
-        // foreach (var pin in pins)
-        // {
-        //     if (pin.GetPinNumber() ==)
-        //     {
-        //         
-        //     }
-        // }
+    {        
+        foreach (var pin in pins)
+        {
+            if (_pinsStates[pin.pinNumber - 1] == PinState.Fallen)
+            {        
+                _pinsStates[pin.pinNumber - 1] = PinState.Steady;
+                pin.gameObject.SetActive(false);
+            }
+        }
     }
 
-    private void CleanAllPins()
+    private void ResetAllPins()
     {
-        // TODO implementation 
+        _pinsStates = Enumerable.Repeat(PinState.Steady, _pinsInFrameStart).ToArray();
+        
+        foreach (var pin in pins)
+        {       
+            pin.gameObject.SetActive(true);
+            pin.Reset();
+        }
     }
 
     private bool FinishPlayerFrame()
     {
         bool isLastPlayerInFrameCycle = false;
+
+        Debug.Log("current frame of player - "+  _players[_gameStatus.CurrentPlayer - 1].GetName() +" is : " + _players[_gameStatus.CurrentPlayer - 1]._currentFrameOfPlayer + "/" + framesNumber);
         
-        // Save the player's frame
+        // Save the player's frame and update the frame number
         _players[_gameStatus.CurrentPlayer - 1].SetFrameRecord(_gameStatus.CurrentFrame);
+
+        int playerScore =  ScoreManager.Instance.CalculateScoreOfPlayer(_players[_gameStatus.CurrentPlayer - 1], _players[_gameStatus.CurrentPlayer - 1]._currentFrameOfPlayer - 1);
+
+        Debug.Log("playerScore of Player - " + _players[_gameStatus.CurrentPlayer - 1].GetName() + " is: " + playerScore);
 
         _gameStatus.CurrentPlayer++;
         if (_gameStatus.CurrentPlayer > _players.Length)
@@ -193,11 +215,11 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("The player " + _players[_gameStatus.CurrentPlayer - 1].GetName() + "has started playing");
+            Debug.Log("The player " + _players[_gameStatus.CurrentPlayer - 1].GetName() + " has started playing");
         }
         
-        // Clean all pins and reset ball position
-        CleanAllPins();
+        // Reset all pins and reset ball position
+        ResetAllPins();
         ball.Reset();
 
         return isLastPlayerInFrameCycle;
@@ -227,25 +249,29 @@ public class GameManager : MonoBehaviour
     {
         //TODO show on screen the results with a button to go to main menu
         _gameStatus.GameStarted = false;
-        Debug.Log("GameStarted: " + _gameStatus.GameStarted);
+        Debug.Log("FinishGame - GameStarted: " + _gameStatus.GameStarted);
         SceneManager.LoadScene("MainMenu");
     }
 
-    private void OnBallReachedFinish()
-    {
-        _gameStatus.CheckFallenPins = true;
+    private void OnBallReachedFinish() {
+        // _gameStatus.CheckFallenPins = true;
         // If the ball reached the finish point (after the pins) without hitting any pin
-        if (!_gameStatus.CheckFallenPins)
-        {
-            ball.StopSound();
-            FinishRoll();
-        }
+        // if (!_gameStatus.CheckFallenPins)
+        // {
+        //     ball.StopSound();
+        //     FinishRoll();
+        // }
+    }
+
+    private void OnBallStoppedMoving() {
+        Debug.Log("stopppp!!!");
+        _gameStatus.CheckFallenPins = true;
+        ball.StopSound();
     }
 
     private void OnPinSwinging(int pinNumber)
     {
         _gameStatus.CheckFallenPins = true;
-        Debug.Log("CheckFallenPins: " + _gameStatus.CheckFallenPins);
         ball.StopSound();
         _pinsStates[pinNumber - 1] = PinState.Swinging;
     }
@@ -253,15 +279,11 @@ public class GameManager : MonoBehaviour
     private void OnPinSteady(int pinNumber)
     {
         _pinsStates[pinNumber - 1] = PinState.Steady;
-        // Debug.Log("steady!!!");
     }
     
     private void OnPinFallen(int pinNumber)
     {
-        // Debug.Log("fallllll!!!");
-
         _pinsStates[pinNumber - 1] = PinState.Fallen;
-        _gameStatus.FallenPinsInFrame++;
     }
 }
 

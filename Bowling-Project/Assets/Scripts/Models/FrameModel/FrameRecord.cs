@@ -26,7 +26,7 @@ namespace FrameModel
             }
             
             // Invalid roll number
-            return new Score(-1);
+            return new Score(0);
         }
 
         public void SetRoll(int fallenPins, Score score)

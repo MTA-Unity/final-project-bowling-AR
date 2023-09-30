@@ -7,6 +7,7 @@ public class GameEvents: MonoBehaviour
 
     public UnityEvent playersNamesSetEvent = new UnityEvent();
     public UnityEvent ballReachedFinishEvent = new UnityEvent();
+    public UnityEvent ballStoppedMovingEvent = new UnityEvent();
     
     // New delegate and event for an event with a string parameter
     public delegate void IntParamEventHandler(int value);
@@ -37,6 +38,10 @@ public class GameEvents: MonoBehaviour
     public void TriggerBallReachedFinishEvent()
     {
         ballReachedFinishEvent?.Invoke();
+    }
+
+    public void TriggerBallStoppedMoving() {
+        ballStoppedMovingEvent?.Invoke();
     }
     
     public void TriggerPinSwingingEvent(int pinNumber)
