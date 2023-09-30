@@ -2,11 +2,6 @@ using UnityEngine;
 
 public class ArrowController : MonoBehaviour
 {
-    [SerializeField] private float arrowScaleSpeed;
-    
-    private const float MinScale = 1.0f; // Minimum scale along the Z-axis
-    private const float MaxScale = 2.0f; // Maximum scale along the Z-axis
-
     private Vector3 _initialScale;
 
     private void Start()
@@ -15,13 +10,11 @@ public class ArrowController : MonoBehaviour
         _initialScale = transform.localScale;
     }
     
-    public void ChangeArrowScale(float verticalInput)
+    public void ChangeArrowScale(float newZScale)
     {
         // Calculate the new scale factor.
         Vector3 localScale = transform.localScale;
         
-        float newZScale = Mathf.Clamp(localScale.z +
-                                    (verticalInput * arrowScaleSpeed * Time.deltaTime), MinScale, MaxScale); 
         var newLocalScale = new Vector3(localScale.x, localScale.y, newZScale);
         transform.localScale = newLocalScale;
     }
