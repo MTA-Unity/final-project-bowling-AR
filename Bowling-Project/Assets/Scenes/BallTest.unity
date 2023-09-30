@@ -1038,7 +1038,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SoundSpriteList:
   - {fileID: 21300000, guid: 616ed2a5ff3c0ff4ea7fb213470f8da2, type: 3}
-  - {fileID: 21300000, guid: 616ed2a5ff3c0ff4ea7fb213470f8da2, type: 3}
+  - {fileID: 21300000, guid: a89d006ecdac1df4498434e6ed289a34, type: 3}
+  CurrentPlayerSpriteList:
+  - {fileID: 21300000, guid: 89d8682ef7d82c347a5a8dd38ed35d61, type: 3}
+  - {fileID: 21300000, guid: dd6d3fdadec11d444a306edd3b01f193, type: 3}
+  PlayerText: {fileID: 340718172}
 --- !u!4 &223423288
 Transform:
   m_ObjectHideFlags: 0
@@ -1100,7 +1104,7 @@ GameObject:
   - component: {fileID: 340718172}
   m_Layer: 5
   m_Name: PlayerTurnName
-  m_TagString: Untagged
+  m_TagString: PlayerText
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4512,7 +4516,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1575892719}
+  - {fileID: 1580090042}
   - {fileID: 419007230}
   m_Father: {fileID: 943572110}
   m_RootOrder: 1
@@ -5860,43 +5864,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1575892718
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1575892719}
-  m_Layer: 5
-  m_Name: PlayerTurn
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1575892719
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1575892718}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1580090042}
-  m_Father: {fileID: 1152053793}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1580090041
 GameObject:
   m_ObjectHideFlags: 0
@@ -5910,7 +5877,7 @@ GameObject:
   - component: {fileID: 1580090043}
   m_Layer: 5
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: PlayerTurn
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5922,13 +5889,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1580090041}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 340718171}
-  m_Father: {fileID: 1575892719}
+  m_Father: {fileID: 1152053793}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -7240,7 +7207,7 @@ GameObject:
   - component: {fileID: 1857951265}
   m_Layer: 5
   m_Name: Sound
-  m_TagString: Untagged
+  m_TagString: Sound
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

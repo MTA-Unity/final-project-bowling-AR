@@ -69,8 +69,8 @@ public class UIController : MonoBehaviour
     private void OnPlayersNamesSet()
     {
         inputWindow.Hide();
-        GameUIConatiner.SetActive(true);
         canvasBackground.gameObject.SetActive(false);
+        GameUIConatiner.SetActive(true);
     }
 
    

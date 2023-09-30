@@ -125,6 +125,7 @@ public class GameManager : MonoBehaviour
         _gameStatus.GameStarted = true;
         Debug.Log("GameStarted  " + _gameStatus.GameStarted);
         Debug.Log("The player " + _players[0].GetName() + " has started playing");
+        GameUIController.Instance.ChangeCurrPlayerImage(0);
     }
 
     private bool FinishRoll()
@@ -262,6 +263,11 @@ public class GameManager : MonoBehaviour
 
         _pinsStates[pinNumber - 1] = PinState.Fallen;
         _gameStatus.FallenPinsInFrame++;
+    }
+
+    public string GetCurrentPlayer()
+    {
+        return _players[_gameStatus.CurrentPlayer].GetName();
     }
 }
 
