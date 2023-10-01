@@ -56,8 +56,8 @@ public class UiInputNamesWindow : MonoBehaviour
 
         if (_playersNames.Count > 0)
         {
-            GameManager.Instance.SetPlayersNames(_playersNames);
             GameEvents.Instance.TriggerPlayersNamesSetEvent();
+            GameManager.Instance.SetPlayersNames(_playersNames);
         }
     }
 }

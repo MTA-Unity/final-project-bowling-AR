@@ -120,9 +120,12 @@ public class BallController : MonoBehaviour
         Debug.Log("throwForceVector: " + throwForceVector);
 
         ballRigidBody.AddForce(throwForceVector, ForceMode.Impulse);
-        
-        // Play sound of rolling ball   
-        audioSource.PlayOneShot(rollingBallAudioClip);
+
+        // Play sound of rolling ball
+        if (GameUIController.Instance.IsAudioEnable())
+        {
+            audioSource.PlayOneShot(rollingBallAudioClip);
+        }
     }
 
     public void Reset()
