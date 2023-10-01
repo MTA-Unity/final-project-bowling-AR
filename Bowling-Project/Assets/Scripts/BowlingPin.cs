@@ -54,7 +54,10 @@ public class BowlingPin : MonoBehaviour
     void OnCollisionEnter(Collision collision) {
         if (collision.gameObject.tag != "Floor") {
             // Play sound of colliding
-            audioSource.PlayOneShot(StrikeAudioClip);
+            if (GameUIController.Instance.IsAudioEnable())
+            {
+                audioSource.PlayOneShot(StrikeAudioClip);
+            }
         }
     }
 }

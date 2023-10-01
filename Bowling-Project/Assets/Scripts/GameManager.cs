@@ -9,7 +9,8 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private BallController ball;
-    private int framesNumber = 2;
+    [SerializeField] private GameObject gameFinishScreenManager;
+    private int framesNumber = 3;
     private Player[] _players;
     private PinState[] _pinsStates;
     private BowlingPin[] pins;
@@ -129,6 +130,7 @@ public class GameManager : MonoBehaviour
         _gameStatus.GameStarted = true;
         Debug.Log("GameStarted  " + _gameStatus.GameStarted);
         Debug.Log("The player " + _players[0].GetName() + " has started playing");
+        GameUIController.Instance.SetCurrentPlayerImage(0);
     }
 
     private void SetAllBowlingPins() {
@@ -139,16 +141,19 @@ public class GameManager : MonoBehaviour
     {
         bool isLastRollInFrame = true;
         _gameStatus.CheckFallenPins = false;
-        Debug.Log("FinishRoll, Player - "+ _gameStatus.CurrentPlayer);
+        Debug.Log("FinishRoll, Player "+ _gameStatus.CurrentPlayer);
         
         // Save the current roll data (score, fallen pins, etc)
-        Score score = SaveRollData(); 
+        Score score = SaveRollData();
 
         // checking if it's strike
         if (score.Strike) {
             _gameStatus.CurrentFrame.SetNumberOfRollsInFrame(1);
         }
-        
+
+        GameUIController.Instance.SetFrameScoreText(_gameStatus.CurrentPlayer, _gameStatus.CurrentFrame.GetCurrentFrameNumber(), _gameStatus.CurrentFrame.GetCurrentRollNumber(), score.NumericScore);
+
+
         // If it's not the last roll - progress to next roll and return false
         if (_gameStatus.CurrentFrame.GetCurrentRollNumber() < _gameStatus.CurrentFrame.GetNumberOfRollsInFrame())
         {
@@ -208,6 +213,8 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("playerScore of Player - " + _players[_gameStatus.CurrentPlayer - 1].GetName() + " is: " + playerScore);
 
+        GameUIController.Instance.SetTotalScoreText(_gameStatus.CurrentPlayer, _gameStatus.CurrentFrame.GetCurrentFrameNumber(), playerScore);
+
         _gameStatus.CurrentPlayer++;
         if (_gameStatus.CurrentPlayer > _players.Length)
         {
@@ -216,8 +223,10 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.Log("The player " + _players[_gameStatus.CurrentPlayer - 1].GetName() + " has started playing");
+            GameUIController.Instance.SetCurrentPlayerImage(_gameStatus.CurrentPlayer - 1);
+
         }
-        
+
         // Reset all pins and reset ball position
         ResetAllPins();
         ball.Reset();
@@ -236,6 +245,8 @@ public class GameManager : MonoBehaviour
             _gameStatus.CurrentPlayer = 1;
             Debug.Log("The player " + _players[_gameStatus.CurrentPlayer - 1].GetName() + " has started playing");
             _gameStatus.CurrentFrame = new FrameRecord(nextFrameNum);
+
+            GameUIController.Instance.SetCurrentPlayerImage(_gameStatus.CurrentPlayer - 1);
         }
         else
         {
@@ -250,7 +261,8 @@ public class GameManager : MonoBehaviour
         //TODO show on screen the results with a button to go to main menu
         _gameStatus.GameStarted = false;
         Debug.Log("FinishGame - GameStarted: " + _gameStatus.GameStarted);
-        SceneManager.LoadScene("MainMenu");
+        gameFinishScreenManager.SetActive(true);
+        Time.timeScale = 0f;
     }
 
     private void OnBallReachedFinish() {
@@ -284,6 +296,11 @@ public class GameManager : MonoBehaviour
     private void OnPinFallen(int pinNumber)
     {
         _pinsStates[pinNumber - 1] = PinState.Fallen;
+    }
+
+    public string GetCurrentPlayer()
+    {
+        return _players[_gameStatus.CurrentPlayer -1].GetName();
     }
 }
 
