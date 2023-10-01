@@ -6,6 +6,10 @@ TagManager:
   tags:
   - pin
   - Floor
+  - Sound
+  - PlayerTurn
+  - PlayerText
+  - StopBall
   layers:
   - Default
   - TransparentFX

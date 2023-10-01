@@ -82,3 +82,4 @@ crashlytics_build_id.xml
 /[Aa]ssets/Firebase/Plugins/x86_64/
 
 .DS_Store
+/Packages/com.ptc.vuforia.engine-10.17.4*

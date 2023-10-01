@@ -6,6 +6,9 @@ public class BallController : MonoBehaviour
     [SerializeField] private Rigidbody ballRigidBody;
     [SerializeField] private Transform ballTransform;
     [SerializeField] private Transform ballStartPosition;
+    [SerializeField] private Transform ballRightBorder;
+    [SerializeField] private Transform ballLeftBorder;
+    [SerializeField] private Transform floorPosition;
     [SerializeField] private Transform ballFinishPosition;
     [SerializeField] private ArrowController arrow;
     
@@ -28,6 +31,7 @@ public class BallController : MonoBehaviour
     private bool notifiedReachedToFinishLine = false;
     private bool notifiedStoppedMoving = false;
     private bool startedMoving = false;
+    private bool stopBallBtnClicked = false;
     
     private void Start()
     {
@@ -37,7 +41,7 @@ public class BallController : MonoBehaviour
     private void Update()
     {
         // Continue to next ball control state
-        if (Input.GetKeyDown(KeyCode.Space) && _ballControlState != BallControlState.InMotion)
+        if (stopBallBtnClicked && _ballControlState != BallControlState.InMotion)
         {
             if (_ballControlState == BallControlState.ThrowForce)
             {
@@ -48,6 +52,7 @@ public class BallController : MonoBehaviour
             int nextBallState = ((int)_ballControlState + 1) % Enum.GetValues(typeof(BallControlState)).Length;
             _ballControlState = (BallControlState)nextBallState;
             
+            stopBallBtnClicked = false;
             Debug.Log("Current control state: " + _ballControlState);
         }
 
@@ -82,7 +87,7 @@ public class BallController : MonoBehaviour
         }
 
         if ((ballRigidBody.velocity.magnitude == 0 && startedMoving && !notifiedStoppedMoving)
-         || (ballTransform.position.y < 0 && startedMoving && !notifiedStoppedMoving)) {
+         || (ballTransform.position.y < floorPosition.position.y && startedMoving && !notifiedStoppedMoving)) {
             startedMoving = false;
             notifiedStoppedMoving = true;
             GameEvents.Instance.TriggerBallReachedFinishEvent();
@@ -95,17 +100,21 @@ public class BallController : MonoBehaviour
         }
     }
 
+    public void StopButtonClickedListener() {
+        stopBallBtnClicked = true;
+    }
+
     private void movePositionAnimation() {
         // Move the ball left and right within the screen boundaries.
         _newPosition.x += movementSpeed * Time.deltaTime;            
 
         // Check if the ball reaches the floor edges and reverse direction.
-        if (_newPosition.x > 4)
+        if (_newPosition.x > ballRightBorder.position.x)
         {
-            _newPosition.x = 4;
+            _newPosition.x = ballRightBorder.position.x;
             movementSpeed *= -1;
-        } else if (_newPosition.x < -4) {
-            _newPosition.x = -4;
+        } else if (_newPosition.x < ballLeftBorder.position.x) {
+            _newPosition.x = ballLeftBorder.position.x;
             movementSpeed *= -1;
         } 
     }
@@ -153,6 +162,13 @@ public class BallController : MonoBehaviour
     {
         arrow.gameObject.SetActive(false);
         ballRigidBody.isKinematic = false;
+
+        BowlingPin[] pins = FindObjectsOfType<BowlingPin>();
+
+        foreach (var pin in pins)
+        {       
+            pin.setPinKinemticFalse();
+        }
         
         // Calculate the throw force based on the arrow's local scale on the Z-axis.
         float throwForce = arrow.GetArrowScaleOnZAxis() * startThrowForce;
@@ -173,6 +189,7 @@ public class BallController : MonoBehaviour
         ballRigidBody.isKinematic = true;
         startedMoving = false;
         notifiedStoppedMoving = false;
+        stopBallBtnClicked = false;
         _ballControlState = BallControlState.Position;
 
         // Reset ball position and rotation
