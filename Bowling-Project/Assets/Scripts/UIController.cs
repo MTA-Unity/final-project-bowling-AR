@@ -21,6 +21,7 @@ public class UIController : MonoBehaviour
 
     public void StartGame()
     {
+        Debug.Log("start game");
         MainMenuOptions.SetActive(false);
         inputWindow.Show();
     }
