@@ -20,4 +20,12 @@ public class GameFinishScreenManager : MonoBehaviour
         SceneManager.LoadScene("BallTest");
     }
 
+    public void Restart()
+    {
+        Time.timeScale = 1f;
+        gameFinishScreen.SetActive(false);
+        GameManager.Instance.ResetGame();
+        ScoreManager.Instance.ResetScore();
+        GameUIController.Instance.ResetScoreResult();
+    }
 }

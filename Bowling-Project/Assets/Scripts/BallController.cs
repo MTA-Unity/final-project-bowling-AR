@@ -40,7 +40,6 @@ public class BallController : MonoBehaviour
 
     private void Update()
     {
-        // Input.GetKeyDown("space") // TODO - remove this line
         // Continue to next ball control state
         if (stopBallBtnClicked && _ballControlState != BallControlState.InMotion)
         {
@@ -167,13 +166,6 @@ public class BallController : MonoBehaviour
     {
         arrow.gameObject.SetActive(false);
         ballRigidBody.isKinematic = false;
-
-        BowlingPin[] pins = FindObjectsOfType<BowlingPin>();
-
-        foreach (var pin in pins)
-        {       
-            pin.setPinKinemticFalse();
-        }
         
         // Calculate the throw force based on the arrow's local scale on the Z-axis.
         float throwForce = arrow.GetArrowScaleOnZAxis() * startThrowForce;

@@ -13,9 +13,6 @@ public class PositionController : MonoBehaviour
     }
     public void SetGamePosition() {
         // Set the position of the "full-game" object to match the position of "game-pos"
-        // if (!fullGame.gameObject.activeSelf) {
-        //     fullGame.gameObject.SetActive(true);
-        // }
         if (!wasPositionSet) {
             fullGame.gameObject.SetActive(true);
             fullGame.position = gamePos.position;

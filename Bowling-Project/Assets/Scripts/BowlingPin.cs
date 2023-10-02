@@ -17,7 +17,6 @@ public class BowlingPin : MonoBehaviour
         pinNumber = GetPinNumber();
         startingPosition = transform.position;
         startingRotation = transform.rotation;
-        // rb.isKinematic = true; // TODO - remove this line
     }
 
     int GetPinNumber() {
@@ -28,14 +27,9 @@ public class BowlingPin : MonoBehaviour
     public void Reset() {
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
-        // rb.isKinematic = true; // TODO - remove this line
         transform.position = startingPosition;
         transform.rotation = startingRotation;
         transform.rotation = Quaternion.Euler(-90f, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
-    }
-
-    public void setPinKinemticFalse() { 
-        // rb.isKinematic = false; // TODO - remove this line
     }
 
     void Update()
