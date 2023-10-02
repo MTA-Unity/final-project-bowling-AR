@@ -69,6 +69,22 @@ public class GameManager : MonoBehaviour
         GameEvents.Instance.PinFallenEvent -= OnPinFallen;
     }
 
+    public void ResetGame()
+    {
+        _gameStatus = new GameStatus();
+
+        for (int i = 0; i < _players.Length; i++)
+        {
+            _players[i] = new Player(name = _players[i].GetName(), framesNumber);
+            Debug.Log("Player " + i +": " + _players[i].GetName());
+        }
+
+        _gameStatus.GameStarted = true;
+        Debug.Log("GameStarted  " + _gameStatus.GameStarted);
+        Debug.Log("The player " + _players[0].GetName() + " has started playing");
+        GameUIController.Instance.SetCurrentPlayerImage(0, _players[0].GetName().ToString());
+    }
+
     private void PlayGame()
     {
         if (_gameStatus.CheckFallenPins)
@@ -130,7 +146,7 @@ public class GameManager : MonoBehaviour
         _gameStatus.GameStarted = true;
         Debug.Log("GameStarted  " + _gameStatus.GameStarted);
         Debug.Log("The player " + _players[0].GetName() + " has started playing");
-        GameUIController.Instance.SetCurrentPlayerImage(0);
+        GameUIController.Instance.SetCurrentPlayerImage(0, _players[0].GetName().ToString());
     }
 
     private void SetAllBowlingPins() {
@@ -223,8 +239,7 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.Log("The player " + _players[_gameStatus.CurrentPlayer - 1].GetName() + " has started playing");
-            GameUIController.Instance.SetCurrentPlayerImage(_gameStatus.CurrentPlayer - 1);
-
+            GameUIController.Instance.SetCurrentPlayerImage(_gameStatus.CurrentPlayer - 1, _players[_gameStatus.CurrentPlayer - 1].GetName().ToString());
         }
 
         // Reset all pins and reset ball position
@@ -246,7 +261,7 @@ public class GameManager : MonoBehaviour
             Debug.Log("The player " + _players[_gameStatus.CurrentPlayer - 1].GetName() + " has started playing");
             _gameStatus.CurrentFrame = new FrameRecord(nextFrameNum);
 
-            GameUIController.Instance.SetCurrentPlayerImage(_gameStatus.CurrentPlayer - 1);
+            GameUIController.Instance.SetCurrentPlayerImage(_gameStatus.CurrentPlayer - 1, _players[_gameStatus.CurrentPlayer - 1].GetName().ToString());
         }
         else
         {
@@ -258,7 +273,6 @@ public class GameManager : MonoBehaviour
     
     private void FinishGame()
     {
-        //TODO show on screen the results with a button to go to main menu
         _gameStatus.GameStarted = false;
         Debug.Log("FinishGame - GameStarted: " + _gameStatus.GameStarted);
         gameFinishScreenManager.SetActive(true);

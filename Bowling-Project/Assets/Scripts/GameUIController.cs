@@ -89,7 +89,7 @@ public class GameUIController : MonoBehaviour
         }
     }
 
-    public void SetCurrentPlayerImage(int playerID)
+    public void SetCurrentPlayerImage(int playerID, string playerName)
     {
         _imageCurrPlayerCompGameObject = GameObject.FindWithTag("PlayerTurn");
 
@@ -97,25 +97,25 @@ public class GameUIController : MonoBehaviour
         {
             _imageCurrPlayerComp = _imageCurrPlayerCompGameObject.GetComponent<Image>();
             _imageCurrPlayerComp.sprite = CurrentPlayerSpriteList[playerID];
-            SetCurrentPlayerText();
+            SetCurrentPlayerText(playerName);
         }
     }
 
-    private void SetCurrentPlayerText()
+    private void SetCurrentPlayerText(string playerName)
     {
         _PlayerTextGameObject = GameObject.FindWithTag("PlayerText");
 
         if (_PlayerTextGameObject != null)
         {
             PlayerText = _PlayerTextGameObject.GetComponent<TextMeshProUGUI>();
-            PlayerText.text = GameManager.Instance.GetCurrentPlayer().ToString();
+            PlayerText.text = playerName;
         }
     }
 
 
     public void ResetScoreResult()
     {
-        for (int i= 0; i< scoreFrameResultListPlayer.Count; i++)
+        for (int i= 1; i< scoreFrameResultListPlayer.Count; i++)
         {
             frameScoreText = scoreFrameResultListPlayer[i].GetComponent<TextMeshProUGUI>();
             frameScoreText.text = "";
@@ -124,7 +124,14 @@ public class GameUIController : MonoBehaviour
         for (int i = 0; i < scoreTotalResultListPlayer.Count; i++)
         {
             totalScoreText = scoreTotalResultListPlayer[i].GetComponent<TextMeshProUGUI>();
-            totalScoreText.text = "";
+            if ((i == 0) || i ==  (scoreTotalResultListPlayer.Count-1))
+            {
+                totalScoreText.text = "0";
+            }
+            else
+            {
+                totalScoreText.text = "";
+            }
         }
     }
 
