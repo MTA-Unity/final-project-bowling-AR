@@ -40,6 +40,7 @@ public class BallController : MonoBehaviour
 
     private void Update()
     {
+        // Input.GetKeyDown("space") // TODO - remove this line
         // Continue to next ball control state
         if (stopBallBtnClicked && _ballControlState != BallControlState.InMotion)
         {
@@ -155,6 +156,10 @@ public class BallController : MonoBehaviour
         if (_ballControlState == BallControlState.Position)
         {
             ballRigidBody.MovePosition(_newPosition);
+        }
+        if (_ballControlState == BallControlState.Rotation)
+        {
+            ballRigidBody.MoveRotation(Quaternion.Euler(_newRotation));
         }
     }
 

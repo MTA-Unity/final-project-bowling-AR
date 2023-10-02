@@ -2,13 +2,7 @@ using UnityEngine;
 
 public class ArrowController : MonoBehaviour
 {
-    private Vector3 _initialScale;
-
-    private void Start()
-    {
-        // Store the initial scale of the arrow.
-        _initialScale = transform.localScale;
-    }
+    private Vector3 _initialScale = new Vector3(1,1,1);
     
     public void ChangeArrowScale(float newZScale)
     {
